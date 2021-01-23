@@ -11,9 +11,9 @@ cartRouter.get("/", async (req, res, next) => {
   }
 });
 
-cartRouter.get("/:id", async (req, res, next) => {
+cartRouter.get("/:userId", async (req, res, next) => {
   try {
-    const cart = await Cart.findByPk(req.params.id);
+    const cart = await Cart.findAll({ where: { userId: req.params.userId } });
     res.status(200).send({ cart });
   } catch (err) {
     console.log(err);

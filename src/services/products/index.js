@@ -9,7 +9,7 @@ const cloudinary = require("../../utils/lib/cloudinary");
 const storage = new CloudinaryStorage({
   cloudinary,
   params: {
-    folder: "ecommerce_products",
+    folder: "ecommerce",
   },
 });
 const parser = multer({ storage });
@@ -18,11 +18,11 @@ productRouter.get("/", async (req, res, next) => {
   try {
     //   const products = await Product.findAll();
     const options = {
-      attributes: ["id", "name"],
+      attributes: ["id", "name", "image", "price"],
       page: 1, // Default 1
       paginate: 25, // Default 25
       order: [["name", "DESC"]],
-      // where: { name: { [Op.like]: `%elliot%` } },
+      // where: { name: { [Op.like]: req.query ? `%${req.query.name}%` : !null } },
     };
     const { docs, pages, total } = await Product.paginate(options);
     res.status(200).send({ docs, pages, total });
@@ -31,10 +31,35 @@ productRouter.get("/", async (req, res, next) => {
   }
 });
 
-productRouter.get("/:id", async (req, res, next) => {
+productRouter.get("/category/:id", async (req, res, next) => {
   try {
-    const product = await Product.findByPk(req.params.id);
-    res.status(200).send({ product });
+    //   const products = await Product.findAll();
+    const options = {
+      attributes: ["id", "name", "image", "price"],
+      page: 1, // Default 1
+      paginate: 25, // Default 25
+      order: [["name", "DESC"]],
+      where: { categoryId: req.params.id },
+    };
+    const { docs, pages, total } = await Product.paginate(options);
+    res.status(200).send({ docs, pages, total });
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+productRouter.get("/", async (req, res, next) => {
+  try {
+    //   const products = await Product.findAll();
+    const options = {
+      attributes: ["id", "name", "image", "price"],
+      page: 1, // Default 1
+      paginate: 25, // Default 25
+      order: [["name", "DESC"]],
+      // where: { name: { [Op.like]: req.query ? `%${req.query.name}%` : !null } },
+    };
+    const { docs, pages, total } = await Product.paginate(options);
+    res.status(200).send({ docs, pages, total });
   } catch (err) {
     console.log(err);
   }
@@ -54,11 +79,13 @@ productRouter.post(
   async (req, res, next) => {
     try {
       const image = req.file && req.file.path; // add the single
+      console.log(image);
+      console.log(req.params.id);
       const updatedProduct = await Product.update(
         { image },
         { returning: true, where: { id: req.params.id } }
       );
-      res.status(200).send({ updated });
+      res.status(200).send({ updatedProduct });
     } catch (err) {
       console.log(err);
     }

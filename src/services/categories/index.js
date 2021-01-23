@@ -14,7 +14,6 @@ categoryRouter.get("/", async (req, res, next) => {
   }
 });
 
-
 categoryRouter.get("/:id/count", async (req, res, next) => {
   try {
     const category = await Category.findByPk(req.params.id, {
@@ -26,7 +25,6 @@ categoryRouter.get("/:id/count", async (req, res, next) => {
       group: ["category.id"],
     });
 
-    
     res.status(200).send({ total });
   } catch (err) {
     console.log(err);
@@ -36,9 +34,9 @@ categoryRouter.get("/:id/count", async (req, res, next) => {
 categoryRouter.get("/:id", async (req, res, next) => {
   try {
     const category = await Category.findByPk(req.params.id, {
-      include: { model: Article },
+      include: { model: Product },
     });
-    const quantity = category.articles.length;
+    const quantity = category.products.length;
     res.status(200).send({ category, quantity });
   } catch (err) {
     console.log(err);

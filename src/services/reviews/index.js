@@ -11,9 +11,11 @@ reviewRouter.get("/", async (req, res, next) => {
   }
 });
 
-reviewRouter.get("/:id", async (req, res, next) => {
+reviewRouter.get("/:productId", async (req, res, next) => {
   try {
-    const review = await Review.findByPk(req.params.id);
+    const review = await Review.findAll({
+      where: { productId: req.params.productId },
+    });
     res.status(200).send({ review });
   } catch (err) {
     console.log(err);
